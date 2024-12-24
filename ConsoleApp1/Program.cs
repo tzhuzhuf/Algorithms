@@ -9,8 +9,8 @@ class WordGame
         Console.WriteLine("ИГРА В СЛОВА!");
         Console.WriteLine("Для завершения игры введите 'выход'.");
 
-        string filePath = "C:\\Users\\tzhuz\\source\\repos\\ConsoleApp1\\ConsoleApp1\\bin\\Debug\\net8.0\\summary.txt";
-        
+        string filePath = System.IO.Path.GetFullPath(@"summary.txt");
+
 
         List<string> availableWords = ToList(filePath);
         List<string> usedWords = new List<string>();

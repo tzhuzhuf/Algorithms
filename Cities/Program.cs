@@ -10,8 +10,10 @@ class Program
 
     static void Main()
     {
-        string filePath = "C:\\Users\\tzhuz\\source\\repos\\ConsoleApp1\\Cities\\bin\\Debug\\net8.0\\russian_cities.txt";
-        Console.WriteLine("Выберите режим игры: \n1 - PvP \n2 - PlayerVsBot");
+        string filePath = System.IO.Path.GetFullPath(@"russian_cities.txt");
+        cities = ToList(filePath);
+
+        Console.WriteLine("Выберите режим игры: \n1 - Игрок против игрока \n2 - PlayerVsBot");
         int mode = int.Parse(Console.ReadLine());
 
         if (mode == 1)
@@ -20,6 +22,19 @@ class Program
             PlayerVsBot();
         else
             Console.WriteLine("Неверный режим.");
+    }
+    static List<string> ToList(string filePath)
+    {
+        List<string> cities = new List<string>();
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+            string? line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                cities.Add(line.Trim().ToLower());
+            }
+        }
+        return cities;
     }
 
     static void PvP()
@@ -30,30 +45,30 @@ class Program
         while (true)
         {
             Console.WriteLine($"Игрок {currentPlayer}, назовите город (или введите 'сдаться' для завершения):");
-            string playerCity = Console.ReadLine().Trim();
+            string input = Console.ReadLine().Trim();
 
-            if (playerCity.ToLower() == "сдаться")
+            if (input.ToLower() == "сдаться")
             {
-                Console.WriteLine($"Игрок {currentPlayer} победил!");
+                Console.WriteLine($"Игрок {3 - currentPlayer} победил!");
                 break;
             }
 
-            while (!IsValidCity(playerCity, lastCity, currentPlayer))
+            while (!IsValidCity(input, lastCity, currentPlayer))
             {
                 Console.WriteLine($"Игрок {currentPlayer}, попробуйте еще раз:");
-                playerCity = Console.ReadLine().Trim();
+                input = Console.ReadLine().Trim();
 
-                if (playerCity.ToLower() == "сдаться")
+                if (input.ToLower() == "сдаться")
                 {
                     Console.WriteLine($"Игрок {currentPlayer} победил!");
                     return;
                 }
             }
 
-            usedCities.Add(playerCity.ToLower());
-            lastCity = playerCity;
+            usedCities.Add(input.ToLower());
+            lastCity = input;
 
-            if (!CitiesAvailable(lastCity))
+            if (!IsCitieAvailable(lastCity))
             {
                 Console.WriteLine($"Игрок {currentPlayer} проиграл! Все города на букву '{char.ToUpper(lastCity.Last())}' закончились.");
                 break;
@@ -73,30 +88,30 @@ class Program
             if (currentPlayer == 1)
             {
                 Console.WriteLine("Игрок, назовите город (или введите 'сдаться' для завершения):");
-                string playerCity = Console.ReadLine().Trim();
+                string input = Console.ReadLine().Trim();
 
-                if (playerCity.ToLower() == "сдаться")
+                if (input.ToLower() == "сдаться")
                 {
                     Console.WriteLine("Компьютер победил!");
                     break;
                 }
 
-                while (!IsValidCity(playerCity, lastCity, currentPlayer))
+                while (!IsValidCity(input, lastCity, currentPlayer))
                 {
                     Console.WriteLine("Попробуйте еще раз:");
-                    playerCity = Console.ReadLine().Trim();
+                    input = Console.ReadLine().Trim();
 
-                    if (playerCity.ToLower() == "сдаться")
+                    if (input.ToLower() == "сдаться")
                     {
                         Console.WriteLine("Компьютер победил!");
                         return;
                     }
                 }
 
-                usedCities.Add(playerCity.ToLower());
-                lastCity = playerCity;
+                usedCities.Add(input.ToLower());
+                lastCity = input;
 
-                if (!CitiesAvailable(lastCity))
+                if (!IsCitieAvailable(lastCity))
                 {
                     Console.WriteLine("Все города на букву '" + char.ToUpper(lastCity.Last()) + "' кончились. Ничья!");
                     break;
@@ -116,7 +131,7 @@ class Program
                     usedCities.Add(computerCity.ToLower());
                     lastCity = computerCity;
 
-                    if (!CitiesAvailable(lastCity))
+                    if (!IsCitieAvailable(lastCity))
                     {
                         Console.WriteLine("Все города на букву '" + char.ToUpper(lastCity.Last()) + "' кончились. Ничья!");
                         break;
@@ -134,12 +149,10 @@ class Program
 
     static char GetNextLetter(string city)
     {
-        if (string.IsNullOrEmpty(city)) return 'а';
-
         char lastChar = city[city.Length - 1];
 
 
-        while (lastChar == 'ь' || lastChar == 'ъ' || lastChar == 'ы')
+        while (lastChar == 'ь' || lastChar == 'ъ' || lastChar == 'ы') 
         {
             if (city.Length > 1)
             {
@@ -159,7 +172,7 @@ class Program
     {
         if (usedCities.Contains(city.ToLower()))
         {
-            Console.WriteLine($"Город \"{city}\" уже был назван.");
+            Console.WriteLine($"Город \"{city}\" уже был использован.");
             return false;
         }
 
@@ -182,13 +195,13 @@ class Program
         return true;
     }
 
-    static bool CitiesAvailable(string lastCity)
+    static bool IsCitieAvailable(string lastCity)
     {
         if (string.IsNullOrEmpty(lastCity)) return false;
 
         char lastChar = char.ToLower(lastCity.Last());
 
-        if (lastChar == 'ь' || lastChar == 'ъ' || lastChar == 'ы')
+        if (lastChar == 'ь' || lastChar == 'ъ' || lastChar == 'ы') 
         {
             if (lastCity.Length > 1)
             {
@@ -201,9 +214,7 @@ class Program
             }
         }
 
-        return cities.Any(city =>
-    !usedCities.Contains(city.ToLower()) &&
-    city.Length > 0 && char.ToLower(city[0]) == lastChar);
+        return cities.Any(city => !usedCities.Contains(city.ToLower()) && char.ToLower(city[0]) == lastChar);
     }
 
 }

@@ -1,0 +1,14 @@
+﻿<Window x:Class="SudokuApp.SavedGamesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Сохраненные игры" Height="300" Width="400">
+    <Grid>
+        <ListBox Name="SavedGamesList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10"
+                 SelectionChanged="SavedGamesList_SelectionChanged"/>
+        <Button Content="Загрузить" Width="100" Height="30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10"
+                Click="LoadGameButton_Click"/>
+
+        <Button Content="Назад" Width="100" Height="30" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10, 0, 10, 50"
+                Click="BackToMain_Click"/>
+    </Grid>
+</Window>
